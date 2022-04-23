@@ -1,0 +1,102 @@
+#cloud-boothook
+  system
+   chassis-number        ${uuid} 
+   system-ip             ${system_ip}
+   site-id               ${site_id}
+   port-offset           0
+   sp-organization-name  ${organization} 
+   organization-name     ${organization} 
+   console-baud-rate     9600
+   vbond ${vbond_ip} port 12346
+  !
+  sdwan
+   interface GigabitEthernet1
+    tunnel-interface
+     encapsulation ipsec
+     color biz-internet
+     no allow-service bgp
+     allow-service dhcp
+     allow-service dns
+     allow-service icmp
+     allow-service sshd
+     no allow-service netconf
+     no allow-service ntp
+     no allow-service ospf
+     no allow-service stun
+     no allow-service https
+     no allow-service snmp
+     no allow-service bfd
+    exit
+   exit
+   !
+  !
+  !
+  hostname C8000v-jmb
+  !
+  username admin privilege 15 secret 9 $9$3/IE1lEJ2/EH4.$1e7Vht.ttRRV3yZsESiDnSXqnTUV3hhLWEA/9Z4VSmc
+  username jmb privilege 15 secret 9 $9$1kwK3kwD1lAM2E$KwOkebfHTiu8naZLCtM5A1cVgBfw4R4Vhsp6nlXhQAU
+  !
+  !
+  vrf definition 10
+   rd 1:10
+   address-family ipv4
+    route-target export 1:10
+    route-target import 1:10
+    exit-address-family
+   !
+   address-family ipv6
+    exit-address-family
+   !
+  !
+  vrf definition Mgmt-intf
+   description MANAGEMENT
+   rd          1:512
+   address-family ipv4
+    route-target export 1:512
+    route-target import 1:512
+    exit-address-family
+   !
+   address-family ipv6
+    exit-address-family
+   !
+  !
+  ip host vbond-dev-11856173.viptela.info 52.203.169.226 
+  !
+  interface GigabitEthernet1
+   description   TRANSPORT - INET
+   no shutdown
+   ip address dhcp
+  exit
+  !
+  interface Loopback10
+   no shutdown
+   arp timeout 1200
+   vrf forwarding 10
+   ip address 10.0.0.109 255.255.255.255
+   ip mtu 1500
+  exit
+  !
+  interface Tunnel1
+   no shutdown
+   ip unnumbered GigabitEthernet1
+   tunnel source GigabitEthernet1
+   tunnel mode sdwan
+  exit
+  !
+  clock timezone UTC 0 0
+  !
+  aaa authentication login default local
+  aaa authorization exec default local
+  !
+  line con 0
+   speed    9600
+   stopbits 1
+  !
+  line vty 0 4
+   transport input ssh
+  !
+  line vty 5 80
+   transport input ssh
+  !
+ !
+!

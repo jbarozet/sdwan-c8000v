@@ -1,0 +1,6 @@
+#cloud-config
+vinitparam:
+ - uuid : ${uuid} 
+ - org : ${organization}
+ - otp : ${token}
+ - vbond : ${vbond_ip}

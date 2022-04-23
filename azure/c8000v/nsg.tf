@@ -2,8 +2,8 @@
 
 resource "azurerm_network_security_group" "transport" {
   name                = "${var.name}-transport-nsg"
-  location            = var.region
-  resource_group_name = var.rg
+  location            = azurerm_resource_group.rg_c8000v.location
+  resource_group_name = azurerm_resource_group.rg_c8000v.name
 
   security_rule {
     name                       = "ICMP"
@@ -57,8 +57,8 @@ resource "azurerm_network_security_group" "transport" {
 
 resource "azurerm_network_security_group" "service" {
   name                = "${var.name}-service-nsg"
-  location            = var.region
-  resource_group_name = var.rg
+  location            = azurerm_resource_group.rg_c8000v.location
+  resource_group_name = azurerm_resource_group.rg_c8000v.name
 
   security_rule {
     name                       = "All"

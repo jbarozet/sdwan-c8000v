@@ -2,8 +2,8 @@
 
 resource "azurerm_public_ip" "public" {
   name                = "${var.name}-public-ip"
-  location            = var.region
-  resource_group_name = azurerm_resource_group.my_rg.name
+  location            = azurerm_resource_group.rg_c8000v.location
+  resource_group_name = azurerm_resource_group.rg_c8000v.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
@@ -13,8 +13,8 @@ resource "azurerm_public_ip" "public" {
 
 resource "azurerm_network_interface" "transport" {
   name                 = "${var.name}-transport-nic"
-  location             = var.region
-  resource_group_name  = azurerm_resource_group.my_rg.name
+  location             = azurerm_resource_group.rg_c8000v.location
+  resource_group_name  = azurerm_resource_group.rg_c8000v.name
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -29,8 +29,8 @@ resource "azurerm_network_interface" "transport" {
 
 resource "azurerm_network_interface" "service" {
   name                 = "${var.name}-service-nic"
-  location             = var.region
-  resource_group_name  = var.rg
+  location             = azurerm_resource_group.rg_c8000v.location
+  resource_group_name  = azurerm_resource_group.rg_c8000v.name
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -43,13 +43,12 @@ resource "azurerm_network_interface" "service" {
 }
 
 
-
 # Create Catalyst 8000v:
 
-resource "azurerm_virtual_machine" "instance" {
+resource "azurerm_virtual_machine" "c8000v" {
   name                = var.name
-  location            = var.region
-  resource_group_name = azurerm_resource_group.my_rg.name
+  location            = azurerm_resource_group.rg_c8000v.location
+  resource_group_name = azurerm_resource_group.rg_c8000v.name
 
   network_interface_ids = [
     azurerm_network_interface.transport.id,
@@ -87,7 +86,8 @@ resource "azurerm_virtual_machine" "instance" {
     computer_name  = "${var.name}-vm"
     admin_username = var.username
     admin_password = var.password
-    custom_data    = file("../cloud_init/c8000v.user_data")
+    #custom_data    = file("../cloud_init/c8000v.user_data")
+    custom_data = data.template_cloudinit_config.config.rendered
   }
 
   os_profile_linux_config {
