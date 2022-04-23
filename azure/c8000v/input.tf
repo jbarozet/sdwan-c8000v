@@ -2,8 +2,6 @@ variable "name" {}
 
 variable "region" {}
 
-variable "vnet_id" {}
-
 variable "rg" {}
 
 variable "subnet_transport" {}

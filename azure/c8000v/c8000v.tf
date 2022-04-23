@@ -59,8 +59,8 @@ resource "azurerm_virtual_machine" "c8000v" {
 
   vm_size = var.instance_size
 
-  #  delete_os_disk_on_termination    = true
-  #  delete_data_disks_on_termination = true
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
 
   plan {
     publisher = "cisco"
