@@ -7,8 +7,7 @@ variable "rg" {}
 variable "subnet_transport" {}
 variable "subnet_service" {}
 
-variable "ntp_server" {}
-
+variable "instance_sku" {}
 variable "instance_size" {}
 
 variable "organization" {}
@@ -19,7 +18,7 @@ variable "uuid" {}
 variable "token" {}
 variable "username" {}
 variable "password" {}
-
+variable "ntp_server" {}
 
 data "terraform_remote_state" "spam" {
   backend = "local"

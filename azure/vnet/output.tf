@@ -1,5 +1,5 @@
 
-output "RG" {
+output "rg" {
   value = azurerm_resource_group.my_rg.id
 }
 

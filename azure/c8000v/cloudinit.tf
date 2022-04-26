@@ -1,7 +1,7 @@
 # Create cloud-init config file for C8kv
 
 data "template_file" "cloudconfig" {
-  template = file("../cloud_init/cloud-config")
+  template = file("./cloud_init/cloud-config")
 
   vars = {
     uuid         = var.uuid
@@ -12,7 +12,7 @@ data "template_file" "cloudconfig" {
 }
 
 data "template_file" "cloudboothook" {
-  template = file("../cloud_init/cloud-boothook")
+  template = file("./cloud_init/cloud-boothook")
 
   vars = {
     uuid         = var.uuid
@@ -20,6 +20,7 @@ data "template_file" "cloudboothook" {
     site_id      = var.site_id
     organization = var.organization
     vbond_ip     = var.vbond_ip
+    ntp_server   = var.ntp_server
 
   }
 }

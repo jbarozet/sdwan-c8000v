@@ -1,3 +1,5 @@
+# Instantiate C8000v instance
+
 # Create Public IP Address
 
 resource "azurerm_public_ip" "public" {
@@ -9,7 +11,7 @@ resource "azurerm_public_ip" "public" {
 }
 
 
-# Create NICs:
+# Create NICs
 
 resource "azurerm_network_interface" "transport" {
   name                 = "${var.name}-transport-nic"
@@ -43,7 +45,7 @@ resource "azurerm_network_interface" "service" {
 }
 
 
-# Create Catalyst 8000v:
+# Create Catalyst 8000v
 
 resource "azurerm_virtual_machine" "c8000v" {
   name                = var.name
@@ -65,7 +67,7 @@ resource "azurerm_virtual_machine" "c8000v" {
   plan {
     publisher = "cisco"
     product   = "cisco-c8000v"
-    name      = "17_07_01a-byol"
+    name      = var.instance_sku
   }
 
   storage_os_disk {
@@ -78,7 +80,7 @@ resource "azurerm_virtual_machine" "c8000v" {
   storage_image_reference {
     publisher = "cisco"
     offer     = "cisco-c8000v"
-    sku       = "17_07_01a-byol"
+    sku       = var.instance_sku
     version   = "latest"
   }
 
@@ -86,8 +88,7 @@ resource "azurerm_virtual_machine" "c8000v" {
     computer_name  = "${var.name}-vm"
     admin_username = var.username
     admin_password = var.password
-    #custom_data    = file("../cloud_init/c8000v.user_data")
-    custom_data = data.template_cloudinit_config.config.rendered
+    custom_data    = data.template_cloudinit_config.config.rendered
   }
 
   os_profile_linux_config {
