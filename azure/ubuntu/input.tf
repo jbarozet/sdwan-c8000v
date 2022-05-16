@@ -1,12 +1,5 @@
 variable "name" {}
 variable "rg" {}
-variable "region" {}
-
-
-data "terraform_remote_state" "spam" {
-  backend = "local"
-
-  config = {
-    path = "../vnet/terraform.tfstate"
-  }
-}
+variable "virtual_network" {}
+variable "subnet_transport" {}
+variable "subnet_service" {}

@@ -1,9 +1,9 @@
 # Create Network Security Group and Rule
 
 resource "azurerm_network_security_group" "ubuntu_public" {
-  name                = "${var.name}-public-nsg"
-  location            = var.region
-  resource_group_name = azurerm_resource_group.my_rg.name
+  name                = "${var.name}-transport-nsg"
+  location            = data.azurerm_resource_group.rg_vnet.location
+  resource_group_name = data.azurerm_resource_group.rg_vnet.name
 
   security_rule {
     name                       = "SSH"

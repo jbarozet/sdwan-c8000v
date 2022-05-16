@@ -3,31 +3,24 @@
 # Create public IPs
 resource "azurerm_public_ip" "ubuntu_public" {
   name                = "${var.name}-public-ip"
-  location            = var.region
-  resource_group_name = azurerm_resource_group.my_rg.name
+  location            = data.azurerm_resource_group.rg_vnet.location
+  resource_group_name = data.azurerm_resource_group.rg_vnet.name
   allocation_method   = "Dynamic"
-
-  tags = {
-    environment = "JMB Terraform Demo"
-  }
 }
 
 # Create network interface
 resource "azurerm_network_interface" "ubuntu_public" {
   name                = "${var.name}-public-nic"
-  location            = var.region
-  resource_group_name = azurerm_resource_group.my_rg.name
+  location            = data.azurerm_resource_group.rg_vnet.location
+  resource_group_name = data.azurerm_resource_group.rg_vnet.name
 
   ip_configuration {
     name                          = "${var.name}-public-nic"
-    subnet_id                     = data.terraform_remote_state.spam.outputs.transport_subnet
+    subnet_id                     = data.azurerm_subnet.transport_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.ubuntu_public.id
   }
 
-  tags = {
-    environment = "JMB Terraform Demo"
-  }
 }
 
 # Connect the security group to the network interface
@@ -40,7 +33,7 @@ resource "azurerm_network_interface_security_group_association" "public" {
 resource "random_id" "randomId" {
   keepers = {
     # Generate a new ID only when a new resource group is defined
-    resource_group = azurerm_resource_group.my_rg.name
+    resource_group = data.azurerm_resource_group.rg_vnet.name
   }
 
   byte_length = 8
@@ -49,14 +42,10 @@ resource "random_id" "randomId" {
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "mystorageaccount" {
   name                     = "diag${random_id.randomId.hex}"
-  resource_group_name      = azurerm_resource_group.my_rg.name
-  location                 = var.region
+  resource_group_name      = data.azurerm_resource_group.rg_vnet.name
+  location                 = data.azurerm_resource_group.rg_vnet.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
-  tags = {
-    environment = "Terraform Demo"
-  }
 }
 
 # Create (and display) an SSH key
@@ -72,8 +61,8 @@ output "tls_private_key" {
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "ubuntu" {
   name                  = var.name
-  location              = var.region
-  resource_group_name   = azurerm_resource_group.my_rg.name
+  location              = data.azurerm_resource_group.rg_vnet.location
+  resource_group_name   = data.azurerm_resource_group.rg_vnet.name
   network_interface_ids = [azurerm_network_interface.ubuntu_public.id]
   size                  = "Standard_DS1_v2"
 
@@ -103,7 +92,4 @@ resource "azurerm_linux_virtual_machine" "ubuntu" {
     storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
   }
 
-  tags = {
-    environment = "SDWAN Terraform Demo"
-  }
 }

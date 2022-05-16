@@ -2,8 +2,8 @@
 
 resource "azurerm_network_security_group" "transport" {
   name                = "${var.name}-transport-nsg"
-  location            = azurerm_resource_group.rg_c8000v.location
-  resource_group_name = azurerm_resource_group.rg_c8000v.name
+  location            = data.azurerm_resource_group.rg_c8000v.location
+  resource_group_name = data.azurerm_resource_group.rg_c8000v.name
 
   security_rule {
     name                       = "ICMP"
@@ -57,8 +57,8 @@ resource "azurerm_network_security_group" "transport" {
 
 resource "azurerm_network_security_group" "service" {
   name                = "${var.name}-service-nsg"
-  location            = azurerm_resource_group.rg_c8000v.location
-  resource_group_name = azurerm_resource_group.rg_c8000v.name
+  location            = data.azurerm_resource_group.rg_c8000v.location
+  resource_group_name = data.azurerm_resource_group.rg_c8000v.name
 
   security_rule {
     name                       = "All"
@@ -86,15 +86,3 @@ resource "azurerm_network_security_group" "service" {
 
 }
 
-
-# Create interface and security group associations:
-
-resource "azurerm_network_interface_security_group_association" "transport" {
-  network_interface_id      = azurerm_network_interface.transport.id
-  network_security_group_id = azurerm_network_security_group.transport.id
-}
-
-resource "azurerm_network_interface_security_group_association" "service" {
-  network_interface_id      = azurerm_network_interface.service.id
-  network_security_group_id = azurerm_network_security_group.service.id
-}

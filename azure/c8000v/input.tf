@@ -3,12 +3,13 @@ variable "name" {}
 variable "region" {}
 
 variable "rg" {}
+variable "virtual_network" {}
 
 variable "subnet_transport" {}
 variable "subnet_service" {}
 
-variable "instance_sku" {}
-variable "instance_size" {}
+variable "image_id" {}
+variable "instance_type" {}
 
 variable "organization" {}
 variable "site_id" {}
@@ -19,11 +20,3 @@ variable "token" {}
 variable "username" {}
 variable "password" {}
 variable "ntp_server" {}
-
-data "terraform_remote_state" "spam" {
-  backend = "local"
-
-  config = {
-    path = "../vnet/terraform.tfstate"
-  }
-}
